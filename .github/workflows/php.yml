@@ -21,12 +21,32 @@ jobs:
         with:
           php-version: '8.1'
 
-      # Remove the "Install Dependencies" step if you don't use Composer
-      #- name: Install Composer Dependencies
-      #  run: composer install --no-progress --no-suggest --prefer-dist
+      # Optional: Cache PHP setup for faster runs
+      - name: Cache PHP
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
-      - name: Run Tests
-        run: echo "No tests to run, as composer.json is missing"
-      - name: Run PHP Linter (Syntax Check)
-        run: find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l
-      
+      - name: Run PHP Linter (Detailed Syntax Check)
+        run: |
+          echo "Running PHP syntax check..."
+          find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l || exit 1
+          echo "Linting completed successfully!"
+
+      - name: Run PHPStan (Static Analysis)
+        run: |
+          curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
+          chmod +x phpstan.phar
+          ./phpstan.phar analyse . --level=max --no-progress
+
+      - name: Run PHPUnit Tests
+        run: |
+          curl -L https://phar.phpunit.de/phpunit-9.phar -o phpunit.phar
+          chmod +x phpunit.phar
+          ./phpunit.phar --testdox tests/
+
+      - name: Final Status
+        run: echo "✅ PHP CI completed successfully!"
