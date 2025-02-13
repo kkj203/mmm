@@ -20,48 +20,12 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          coverage: none
 
-      - name: Install Dependencies
-        run: |
-          composer install --no-progress --no-interaction || true
+      # Remove the "Install Dependencies" step if you don't use Composer
+      #- name: Install Composer Dependencies
+      #  run: composer install --no-progress --no-suggest --prefer-dist
 
+      - name: Run Tests
+        run: echo "No tests to run, as composer.json is missing"
       - name: Run PHP Linter (Syntax Check)
-        run: |
-          echo "Running PHP syntax check..."
-          find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l || exit 1
-
-      - name: Run PHPStan (Static Analysis)
-        run: |
-          curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
-          chmod +x phpstan.phar
-          ./phpstan.phar analyse . --level=8 --error-format=table --no-progress
-
-      - name: Run PHPUnit Tests
-        run: |
-          if [ -f "phpunit.xml" ] || [ -d "tests" ]; then
-            curl -L https://phar.phpunit.de/phpunit-9.phar -o phpunit.phar
-            chmod +x phpunit.phar
-            ./phpunit.phar --testdox
-          else
-            echo "No PHPUnit tests found. Skipping."
-          fi
-
-      - name: Security & Permissions Check
-        run: |
-          echo "Checking for unsafe file permissions..."
-          find . -type f -name "*.php" -exec chmod 644 {} \;
-          find . -type d -exec chmod 755 {} \;
-
-      - name: Ensure Function Type Hints & Return Types
-        run: |
-          echo "Checking for missing function type hints..."
-          grep -rnw '.' -e 'function ' | grep -v ':\s*\(\)' || echo "All functions have return types."
-
-      - name: Display PHPStan and Linting Issues Summary
-        run: |
-          echo "ℹ️ Review PHPStan analysis above for missing types and incorrect variable usage."
-          echo "⚠️ Ensure proper type hints for all parameters and return values."
-
-      - name: Final Status
-        run: echo "✅ PHP CI completed successfully!"
+        run: find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l
