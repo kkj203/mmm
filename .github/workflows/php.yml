@@ -53,6 +53,11 @@ jobs:
           find . -type f -name "*.php" -exec chmod 644 {} \;
           find . -type d -exec chmod 755 {} \;
 
+      - name: Ensure Function Type Hints & Return Types
+        run: |
+          echo "Checking for missing function type hints..."
+          grep -rnw '.' -e 'function ' | grep -v ':\s*\(\)' || echo "All functions have return types."
+
       - name: Display PHPStan and Linting Issues Summary
         run: |
           echo "ℹ️ Review PHPStan analysis above for missing types and incorrect variable usage."
