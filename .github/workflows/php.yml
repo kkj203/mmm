@@ -1,52 +1,48 @@
-name: PHP CI
+<?php
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+// Fixed config.php with proper typing and return types
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+declare(strict_types=1);
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+// Example JSON data (adjust if this comes from an external source)
+$jsonData = '{"JITENDRAUNATTI": {"key": "value"}}';
+$data = json_decode($jsonData, true);
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
+if (!is_array($data) || !isset($data['JITENDRAUNATTI'])) {
+    throw new InvalidArgumentException('Invalid JSON structure: Missing JITENDRAUNATTI key.');
+}
 
-      # Optional: Cache PHP setup for faster runs
-      - name: Cache PHP
-        uses: actions/cache@v3
-        with:
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+$config = $data['JITENDRAUNATTI'];
 
-      - name: Run PHP Linter (Detailed Syntax Check)
-        run: |
-          echo "Running PHP syntax check..."
-          find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l || exit 1
-          echo "Linting completed successfully!"
+/**
+ * Function jitendraunatti
+ * 
+ * @param string $CHAVEZ
+ * @param string $HANK
+ * @param string $JANET
+ * @param string $KANG
+ * @param string $MJ
+ * @param string $NICK_FURY
+ * @return string
+ */
+function jitendraunatti(
+    string $CHAVEZ,
+    string $HANK,
+    string $JANET,
+    string $KANG,
+    string $MJ,
+    string $NICK_FURY
+): string {
+    // Example logic: Concatenating all parameters
+    return "$CHAVEZ-$HANK-$JANET-$KANG-$MJ-$NICK_FURY";
+}
 
-      - name: Run PHPStan (Static Analysis)
-        run: |
-          curl -L https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -o phpstan.phar
-          chmod +x phpstan.phar
-          ./phpstan.phar analyse . --level=max --no-progress
-
-      - name: Run PHPUnit Tests
-        run: |
-          curl -L https://phar.phpunit.de/phpunit-9.phar -o phpunit.phar
-          chmod +x phpunit.phar
-          ./phpunit.phar --testdox tests/
-
-      - name: Final Status
-        run: echo "✅ PHP CI completed successfully!"
+// Example usage:
+echo jitendraunatti(
+    'value1',
+    'value2',
+    'value3',
+    'value4',
+    'value5',
+    'value6'
+);
