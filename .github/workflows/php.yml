@@ -27,3 +27,5 @@ jobs:
 
       - name: Run Tests
         run: echo "No tests to run, as composer.json is missing"
+      - name: Run PHP Linter (Syntax Check)
+        run: find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l
